@@ -1,0 +1,17 @@
+# Private tokens — loaded via 1Password CLI
+#
+# HOW TO USE:
+# 1. Copy this file to ~/.dotfiles-private/tokens.zsh
+# 2. Store each token in 1Password:
+#      op item create --category=api_credential --title="My API Token" --vault="Developer Tokens"
+# 3. Update the op:// references below to match your vault/item names
+# 4. The dotfiles .zshrc sources this file automatically if it exists
+#
+# Tokens are fetched live from 1Password on each new shell.
+# You'll be prompted to authenticate with 1Password if not already signed in.
+# To avoid repeated prompts, enable Touch ID in 1Password CLI settings:
+#      op signin
+#      # Then in 1Password app: Settings → Developer → CLI → Enable Touch ID
+
+# export MY_API_TOKEN=$(op read "op://Developer Tokens/My API Token/credential")
+# export GH_PAT=$(op read "op://Developer Tokens/GitHub PAT/credential")

@@ -1,0 +1,27 @@
+# Ghostty Configuration
+
+# Theme
+theme = ricky
+
+# Font
+font-family = JetBrainsMono Nerd Font
+font-size = 14
+
+# Window
+window-padding-x = 8
+window-padding-y = 4
+window-decoration = true
+macos-titlebar-style = transparent
+
+# Mouse
+mouse-scroll-multiplier = 3
+
+# Shell
+shell-integration = zsh
+
+# Clipboard
+clipboard-read = allow
+clipboard-write = allow
+
+# Option key sends Esc+ (needed for tmux Opt+N bindings)
+macos-option-as-alt = true

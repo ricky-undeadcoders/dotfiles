@@ -1,0 +1,22 @@
+# Private aliases — company/machine-specific shortcuts
+#
+# HOW TO USE:
+# 1. Copy this file to ~/.dotfiles-private/aliases.zsh
+# 2. Add any aliases that reference org-specific paths or tools
+# 3. The dotfiles .zshrc sources this file automatically if it exists
+
+# Company-specific quick launch shortcuts
+# alias dt='mux my-work-project'
+
+# Company-specific functions
+# my-tool-setup () {
+#     cd ~/code/my-org/my-tool
+#     bash setup
+# }
+
+# Custom CLI tools built from source
+# my-cli-update () {
+#     echo "Updating my-cli..."
+#     (cd ~/code/my-org/my-cli && git pull && go build -o my-cli . && cp my-cli ~/bin/) && \
+#     echo "my-cli updated"
+# }
