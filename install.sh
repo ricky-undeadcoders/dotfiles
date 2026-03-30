@@ -1,75 +1,16 @@
 #!/usr/bin/env bash
-# Terminal Command Center - Bootstrap Script
-# Idempotent: safe to run multiple times
+# Terminal Command Center - Dotfiles Installer
+# Idempotent: safe to run multiple times.
+# Sets up symlinks, shell config, neovim plugins, and private config scaffold.
+#
+# For machine setup (brew installs), run ./setup.sh first.
 #
 # Usage:
-#   ./install.sh          # Full install (brew + symlinks + shell config)
-#   ./install.sh --link   # Symlinks and shell config only (skip brew)
+#   ./install.sh
 
 set -euo pipefail
 
-# ========================================
-# What gets installed (edit these lists)
-# ========================================
-
-FORMULAE=(
-    # Core
-    git gh jq yq wget htop watch coreutils lazygit
-
-    # Terminal
-    tmux tmuxinator neovim glow ripgrep fd
-
-    # Languages
-    go node deno uv
-
-    # Kubernetes & Infrastructure
-    kubernetes-cli kubectx k9s jsonnet-bundler go-jsonnet kompose
-
-    # Cloud CLIs
-    azure-cli
-
-    # IaC
-    terraform packer
-
-    # Containers
-    dive
-
-    # Data
-    duckdb fx
-
-    # Argo
-    argo
-
-    # Linting & Security
-    shellcheck actionlint golangci-lint trufflehog zizmor
-    markdownlint-cli2 prettier
-
-    # Fun
-    fortune cowsay
-)
-
-CASKS=(
-    1password 1password-cli
-    claude-code
-    docker
-    firefox
-    font-jetbrains-mono-nerd-font
-    ghostty
-    maccy
-    rectangle
-    slack
-    spotify
-    tailscale
-    zoom
-)
-
-# ========================================
-# Script setup
-# ========================================
-
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LINK_ONLY=false
-[[ "${1:-}" == "--link" ]] && LINK_ONLY=true
 
 BOLD=$(tput bold 2>/dev/null || true)
 GREEN=$(tput setaf 2 2>/dev/null || true)
@@ -81,42 +22,6 @@ info()  { echo "${GREEN}[ok]${RESET}    $*"; }
 warn()  { echo "${YELLOW}[warn]${RESET}  $*"; }
 err()   { echo "${RED}[error]${RESET} $*"; }
 header(){ echo ""; echo "${BOLD}$*${RESET}"; }
-
-# ----------------------------------------
-# Homebrew
-# ----------------------------------------
-if ! $LINK_ONLY; then
-
-if ! command -v brew &>/dev/null; then
-    header "Installing Homebrew"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-fi
-
-header "Installing brew formulae"
-
-for pkg in "${FORMULAE[@]}"; do
-    if brew list "$pkg" &>/dev/null; then
-        info "$pkg"
-    else
-        echo "  Installing $pkg..."
-        brew install "$pkg"
-        info "$pkg installed"
-    fi
-done
-
-header "Installing brew casks"
-
-for cask in "${CASKS[@]}"; do
-    if brew list --cask "$cask" &>/dev/null; then
-        info "$cask"
-    else
-        echo "  Installing $cask..."
-        brew install --cask "$cask"
-        info "$cask installed"
-    fi
-done
-
-fi # end --link check
 
 # ----------------------------------------
 # Symlinks
@@ -161,6 +66,7 @@ header "Making scripts executable"
 
 chmod +x "$DOTFILES/claude/scripts/"*.sh 2>/dev/null && info "Shell scripts marked executable" || true
 chmod +x "$DOTFILES/claude/scripts/"*.py 2>/dev/null && info "Python scripts marked executable" || true
+chmod +x "$DOTFILES/setup.sh"
 chmod +x "$DOTFILES/install.sh"
 
 # ----------------------------------------
@@ -177,6 +83,10 @@ else
     cat >> "$ZSHRC" << 'ZSHRC_BLOCK'
 
 # --- Terminal Command Center ---
+# Completion system (must be before anything that registers completions)
+autoload -Uz compinit
+compinit
+
 # PATH and tool init
 [ -f ~/code/dotfiles/zsh/path.zsh ] && source ~/code/dotfiles/zsh/path.zsh
 
@@ -187,13 +97,6 @@ else
 # Private config (tokens, company-specific — not in public repo)
 [ -f ~/.dotfiles-private/tokens.zsh ] && source ~/.dotfiles-private/tokens.zsh
 [ -f ~/.dotfiles-private/aliases.zsh ] && source ~/.dotfiles-private/aliases.zsh
-
-# tmuxinator completion
-if [ -f /opt/homebrew/share/zsh/site-functions/_tmuxinator ]; then
-    fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
-    autoload -Uz compinit
-    compinit
-fi
 
 # Cowsay greeting
 fortune | cowsay
@@ -242,8 +145,4 @@ echo "  1. Reload shell: ${BOLD}source ~/.zshrc${RESET}"
 echo "  2. Set up private config: ${BOLD}cd ~/.dotfiles-private && cp tokens.zsh.example tokens.zsh${RESET}"
 echo "  3. Sign into 1Password CLI: ${BOLD}op signin${RESET}"
 echo "  4. Create your first session: ${BOLD}mux ~/code/my-repo${RESET}"
-echo ""
-echo "${BOLD}Manual installs (not in Homebrew):${RESET}"
-echo "  - Google Cloud SDK: https://cloud.google.com/sdk/docs/install"
-echo "  - AWS CLI: brew install awscli"
 echo ""

@@ -50,34 +50,42 @@ The cheat sheet panel (`Opt+1`) has a full reference including vim, LazyVim, LSP
 
 ## Setup
 
-### 1. Clone and install
+### 1. Clone
 
 ```bash
 git clone https://github.com/ricky-undeadcoders/dotfiles ~/code/dotfiles
 cd ~/code/dotfiles
+```
+
+### 2. Machine setup (new computer only)
+
+```bash
+./setup.sh
+```
+
+Installs Homebrew, CLI tools, and desktop apps. Edit the lists at the top of `setup.sh` to customize. Safe to re-run — skips anything already installed.
+
+### 3. Dotfiles install
+
+```bash
 ./install.sh
 ```
 
 This will:
-- Install all dependencies via Homebrew (formulae + casks)
 - Create symlinks for tmux, neovim, ghostty, and scripts
 - Configure `.zshrc` to source aliases, functions, and PATH setup
 - Scaffold `~/.dotfiles-private/` for secrets and company-specific config
 - Install neovim plugins headless
 
-To skip brew and only set up symlinks/config:
+Idempotent — run it anytime to sync changes.
 
-```bash
-./install.sh --link
-```
-
-### 2. Terminal setup
+### 4. Terminal setup
 
 **Ghostty** (recommended): Works out of the box — `Opt+N` bindings work via the `macos-option-as-alt = true` config.
 
 **iTerm2** (alternative): Set **Profiles → Keys → Left Option key** to `Esc+` to enable `Opt+N` bindings.
 
-### 3. Private config
+### 5. Private config
 
 The installer creates `~/.dotfiles-private/` with example files:
 
@@ -101,7 +109,7 @@ export MY_TOKEN=$(op read "op://Developer Tokens/My Token/credential")
 
 These files are sourced automatically by `.zshrc` but never committed to the public repo.
 
-### 4. Create your first session
+### 6. Create your first session
 
 ```bash
 mnew my-project ~/code/my-repo
@@ -120,7 +128,7 @@ Everything uses the [cyberdream](https://github.com/scottmckendry/cyberdream.nvi
 | Tool | Config location |
 |------|----------------|
 | Neovim | `nvim/lua/plugins/colorscheme.lua` |
-| Ghostty | `ghostty/config` + `ghostty/themes/cyberdream` |
+| Ghostty | `ghostty/config` + `ghostty/themes/ricky` |
 | tmux | `tmux/tmux.conf` (status bar + borders) |
 | Lazygit | `~/.config/lazygit/config.yml` |
 | K9s | `~/.config/k9s/skins/cyberdream.yml` |
@@ -140,10 +148,11 @@ Switch between windows with `Ctrl+b 1` / `Ctrl+b 2` or `Ctrl+b n/p`.
 
 ```
 dotfiles/
-├── install.sh                  # Full bootstrap (brew + symlinks + shell config)
+├── setup.sh                    # Machine setup (brew formulae + casks)
+├── install.sh                  # Dotfiles sync (symlinks + shell config + nvim plugins)
 ├── ghostty/
 │   ├── config                  → ~/.config/ghostty/config
-│   └── themes/cyberdream       → ~/.config/ghostty/themes/
+│   └── themes/ricky            → ~/.config/ghostty/themes/
 ├── tmux/
 │   └── tmux.conf               → ~/.tmux.conf
 ├── nvim/                       → ~/.config/nvim/

@@ -149,6 +149,8 @@ mux () {
         return 1
     fi
 
+    mkdir -p "$HOME/.tmuxinator"
+
     sed \
         -e "s|<%= @settings\[\"name\"\] %>|${name}|g" \
         -e "s|<%= @settings\[\"root\"\] %>|${dir}|g" \
