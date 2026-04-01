@@ -44,9 +44,21 @@ Status bar (top): session | directory | git branch | CPU | MEM | BAT | date/time
 | `Ctrl+b 1` | Main window (editor + claude) |
 | `Ctrl+b 2` | Shell window |
 | `Ctrl+b n/p` | Next/prev window |
+| `Ctrl+b c` | New window |
 | `Ctrl+b \|/-` | Split vertical/horizontal |
 
-The cheat sheet panel (`Opt+1`) has a full reference including vim, LazyVim, LSP, git, and fold keybindings.
+### Neovim highlights
+
+| Key | Action |
+|-----|--------|
+| `Space ff` | Find files |
+| `Space /` | Grep project |
+| `Space e` | File explorer |
+| `Space g s` | Git status (full-screen picker) |
+| `Space g g` | Lazygit |
+| `Space g e` | Git explorer (neo-tree) |
+
+The cheat sheet panel (`Opt+1`) has the full reference including vim, LSP, git, and fold keybindings.
 
 ## Setup
 
@@ -112,28 +124,29 @@ These files are sourced automatically by `.zshrc` but never committed to the pub
 ### 6. Create your first session
 
 ```bash
-mnew my-project ~/code/my-repo
+mux ~/code/my-repo
 ```
 
-This generates a tmuxinator template at `~/.tmuxinator/my-project.yml` and launches the session. For existing sessions:
+This generates a tmuxinator template and launches the session. Also works from inside a directory:
 
 ```bash
-mux my-project
+cd ~/code/my-repo
+mux
 ```
 
 ## Theming
 
-Everything uses the [cyberdream](https://github.com/scottmckendry/cyberdream.nvim) color palette:
+Neovim uses [cyberdream](https://github.com/scottmckendry/cyberdream.nvim). The tmux status bar and Ghostty terminal use a custom palette to match.
 
 | Tool | Config location |
 |------|----------------|
 | Neovim | `nvim/lua/plugins/colorscheme.lua` |
 | Ghostty | `ghostty/config` + `ghostty/themes/ricky` |
 | tmux | `tmux/tmux.conf` (status bar + borders) |
-| Lazygit | `~/.config/lazygit/config.yml` |
-| K9s | `~/.config/k9s/skins/cyberdream.yml` |
 
-The tmux status bar shows: session name, current directory, git branch, CPU%, MEM%, battery%, and date/time — all in cyberdream colors.
+Lazygit and K9s themes are configured separately at `~/.config/lazygit/config.yml` and `~/.config/k9s/skins/cyberdream.yml` — not managed by this repo.
+
+The tmux status bar shows: session name, current directory, git branch, CPU%, MEM%, battery%, and date/time.
 
 ## Multi-Repo Workflows
 
@@ -169,7 +182,7 @@ dotfiles/
 │       ├── tmux-bat.sh         # Status bar: battery level
 │       └── ...
 ├── tmuxinator/
-│   └── example.yml             # Parameterized template for mnew
+│   └── example.yml             # Parameterized template for mux
 ├── zsh/
 │   ├── aliases.zsh             # Shell aliases
 │   ├── functions.zsh           # Shell functions (git, terraform, etc.)
@@ -178,6 +191,18 @@ dotfiles/
     ├── tokens.zsh.example      # 1Password token loading template
     └── aliases.zsh.example     # Company-specific aliases template
 ```
+
+## Python
+
+Python is managed via [uv](https://docs.astral.sh/uv/), not Homebrew or pyenv.
+
+```bash
+pyuse 3.12                      # install + set as system default
+uv venv --python 3.11           # project virtualenv with a different version
+source .venv/bin/activate        # activate (standard virtualenv from here)
+```
+
+`pyuse` installs the version via uv if needed, symlinks it into `~/bin`, and writes `~/.python-version`.
 
 ## What's Not Here
 
