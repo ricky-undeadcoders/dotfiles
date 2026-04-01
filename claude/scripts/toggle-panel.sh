@@ -5,6 +5,7 @@
 #   [cheat/todo (bot-left)] [terminal (bottom, full-width)]
 
 PANEL_NAME="$1"
+SESSION=$(tmux display-message -p '#{session_name}')
 
 # Retag any panes that lost their @panel tag (e.g. race condition on session start)
 while IFS= read -r line; do
@@ -17,21 +18,21 @@ while IFS= read -r line; do
             claude) tmux set-option -t "$pid" -p @panel claude 2>/dev/null ;;
         esac
     fi
-done < <(tmux list-panes -a -F "#{pane_id} #{pane_current_command} #{@panel}" 2>/dev/null)
+done < <(tmux list-panes -s -t "$SESSION" -F "#{pane_id} #{pane_current_command} #{@panel}" 2>/dev/null)
 
-# Get pane ID by @panel user option, with fallback to pane_current_command
+# Get pane ID by @panel user option, scoped to current session
 get_pane() {
     local name="$1"
     local pane
 
-    # Primary: check @panel user option across all panes
-    pane=$(tmux list-panes -a -F "#{pane_id} #{@panel}" 2>/dev/null | awk -v t="$name" '$2==t {print $1; exit}')
+    # Primary: check @panel user option across session panes
+    pane=$(tmux list-panes -s -t "$SESSION" -F "#{pane_id} #{@panel}" 2>/dev/null | awk -v t="$name" '$2==t {print $1; exit}')
 
     # Fallback: for editor/claude, find by running command and auto-tag
     if [ -z "$pane" ]; then
         case "$name" in
-            "editor") pane=$(tmux list-panes -a -F "#{pane_id} #{pane_current_command}" 2>/dev/null | awk '$2=="nvim" {print $1; exit}') ;;
-            "claude") pane=$(tmux list-panes -a -F "#{pane_id} #{pane_current_command}" 2>/dev/null | awk '$2=="claude" {print $1; exit}') ;;
+            "editor") pane=$(tmux list-panes -s -t "$SESSION" -F "#{pane_id} #{pane_current_command}" 2>/dev/null | awk '$2=="nvim" {print $1; exit}') ;;
+            "claude") pane=$(tmux list-panes -s -t "$SESSION" -F "#{pane_id} #{pane_current_command}" 2>/dev/null | awk '$2=="claude" {print $1; exit}') ;;
         esac
         [ -n "$pane" ] && tmux set-option -t "$pane" -p @panel "$name" 2>/dev/null
     fi

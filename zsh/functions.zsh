@@ -10,7 +10,7 @@ gitr () {
     git checkout $branch
     echo "git pull origin $branch"
     git pull origin $branch
-    echo "Cleaning up gone branches..."
+    echo "Cleaning up merged branches..."
     git branch -vv | grep ": gone]" | awk '{print $1}' | xargs -I {} bash -c "git branch -D {}"
 }
 
@@ -107,6 +107,33 @@ tfreinit () {
 d () {
     date && $@
 }
+
+# Switch system python version (via uv)
+# Usage: pyuse 3.12
+pyuse () {
+    local ver="${1:?Usage: pyuse <version> (e.g. pyuse 3.12)}"
+    local py_dir=$(find ~/.local/share/uv/python -maxdepth 1 -name "cpython-${ver}*" -type d 2>/dev/null | sort -V | tail -1)
+
+    if [ -z "$py_dir" ]; then
+        echo "Installing Python $ver via uv..."
+        uv python install "$ver"
+        py_dir=$(find ~/.local/share/uv/python -maxdepth 1 -name "cpython-${ver}*" -type d 2>/dev/null | sort -V | tail -1)
+    fi
+
+    if [ -z "$py_dir" ]; then
+        echo "Error: failed to install Python $ver" >&2
+        return 1
+    fi
+
+    mkdir -p ~/bin
+    ln -sf "$py_dir/bin/python${ver}" ~/bin/python3
+    ln -sf ~/bin/python3 ~/bin/python
+    ln -sf "$py_dir/bin/pip${ver}" ~/bin/pip3
+    ln -sf ~/bin/pip3 ~/bin/pip
+    echo "${ver}" > ~/.python-version
+    echo "System python: $(~/bin/python3 --version)"
+}
+
 # Workspace launcher
 # Usage:
 #   mux                  → create/attach session for current directory
