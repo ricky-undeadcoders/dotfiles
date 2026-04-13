@@ -4,7 +4,7 @@
 # General
 alias ll='ls -lah'
 alias c='printf "\033[2J\033[3J\033[H"'
-alias md='glow'
+alias md='glow -w $COLUMNS'
 alias ssht='ssh -t'
 
 # Docker

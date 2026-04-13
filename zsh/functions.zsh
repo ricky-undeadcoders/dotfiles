@@ -20,7 +20,7 @@ new-branch () {
         echo "Usage: new-branch <branch-suffix>"
         return 1
     fi
-    git checkout -b $(whoami)/$1
+    git checkout -b rwhitaker/$1
 }
 
 # Git: cd to repo root
@@ -50,7 +50,7 @@ create-pr () {
     new-branch $1
     git add -A && git status
     git commit -m $2
-    git push -u origin $(whoami)/$1 --no-verify
+    git push -u origin rwhitaker/$1 --no-verify
     gh pr create --web
 }
 
