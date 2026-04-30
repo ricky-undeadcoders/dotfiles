@@ -22,6 +22,7 @@ shell-integration = zsh
 # Clipboard
 clipboard-read = allow
 clipboard-write = allow
+copy-on-select = clipboard
 
 # Option key sends Esc+ (needed for tmux Opt+N bindings)
 macos-option-as-alt = true
