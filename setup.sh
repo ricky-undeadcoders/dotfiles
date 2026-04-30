@@ -110,6 +110,32 @@ for cask in "${CASKS[@]}"; do
 done
 
 # ----------------------------------------
+# Todolist (personal tool — gitlab.com/ricky-undeadcoders/tools)
+# ----------------------------------------
+header "Installing todolist"
+
+TOOLS_DIR="$HOME/code/tools"
+if [ -d "$TOOLS_DIR/.git" ]; then
+    info "tools repo already cloned at $TOOLS_DIR"
+else
+    git clone https://gitlab.com/ricky-undeadcoders/tools.git "$TOOLS_DIR"
+    info "Cloned tools repo"
+fi
+
+# local.env must exist before the deployment script runs (it reads from it).
+LOCAL_ENV="$HOME/var/todolist/local.env"
+if [ ! -f "$LOCAL_ENV" ]; then
+    warn "$LOCAL_ENV missing — restore from 1Password before running todolist deploy:"
+    warn "  op document get 'todolist-local-env' --vault Private --account my.1password.com --output $LOCAL_ENV"
+    warn "Skipping todolist venv deployment."
+elif compgen -G "$HOME/srv/todolist*-venv" > /dev/null; then
+    info "todolist venv already deployed"
+else
+    (cd "$TOOLS_DIR/deployment_scripts" && bash todolist-venv-deployment.sh)
+    info "todolist venv deployed"
+fi
+
+# ----------------------------------------
 # Done
 # ----------------------------------------
 header "Machine setup complete"
