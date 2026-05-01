@@ -28,6 +28,9 @@ FORMULAE=(
     # Cloud CLIs
     azure-cli
 
+    # Grafana
+    gcx
+
     # IaC
     terraform packer
 
@@ -86,6 +89,15 @@ if ! command -v brew &>/dev/null; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
+header "Tapping third-party repos"
+
+if brew tap | grep -q '^grafana/grafana$'; then
+    info "grafana/grafana already tapped"
+else
+    brew tap grafana/grafana
+    info "grafana/grafana tapped"
+fi
+
 header "Installing brew formulae"
 
 for pkg in "${FORMULAE[@]}"; do
@@ -118,7 +130,7 @@ TOOLS_DIR="$HOME/code/tools"
 if [ -d "$TOOLS_DIR/.git" ]; then
     info "tools repo already cloned at $TOOLS_DIR"
 else
-    git clone https://gitlab.com/ricky-undeadcoders/tools.git "$TOOLS_DIR"
+    git clone git@gitlab.com:ricky-undeadcoders/tools.git "$TOOLS_DIR"
     info "Cloned tools repo"
 fi
 
