@@ -127,7 +127,7 @@ These files are sourced automatically by `.zshrc` but never committed to the pub
 mux ~/code/my-repo
 ```
 
-This generates a tmuxinator template and launches the session. Also works from inside a directory:
+Creates (or attaches to) a tmux session named after the directory. Also works from inside a directory:
 
 ```bash
 cd ~/code/my-repo
@@ -147,15 +147,6 @@ Neovim uses [cyberdream](https://github.com/scottmckendry/cyberdream.nvim). The 
 Lazygit and K9s themes are configured separately at `~/.config/lazygit/config.yml` and `~/.config/k9s/skins/cyberdream.yml` — not managed by this repo.
 
 The tmux status bar shows: session name, current directory, git branch, CPU%, MEM%, battery%, and date/time.
-
-## Multi-Repo Workflows
-
-Each tmuxinator session has two windows:
-
-- **Window 1 (main)**: editor + Claude pane for the primary repo
-- **Window 2 (shell)**: free terminal for secondary repos
-
-Switch between windows with `Ctrl+b 1` / `Ctrl+b 2` or `Ctrl+b n/p`.
 
 ## Structure
 
@@ -181,8 +172,6 @@ dotfiles/
 │       ├── tmux-mem.sh         # Status bar: memory usage
 │       ├── tmux-bat.sh         # Status bar: battery level
 │       └── ...
-├── tmuxinator/
-│   └── example.yml             # Parameterized template for mux
 ├── zsh/
 │   ├── aliases.zsh             # Shell aliases
 │   ├── functions.zsh           # Shell functions (git, terraform, etc.)
@@ -210,7 +199,6 @@ Secrets and company-specific config live in `~/.dotfiles-private/` (never commit
 
 - **Tokens/credentials** — loaded via 1Password CLI (`op read`)
 - **Company-specific aliases** — project shortcuts, internal tool wrappers
-- **Project-specific tmuxinator templates** — sessions with org-specific paths
 
 See `private-template/` for examples of what goes there.
 

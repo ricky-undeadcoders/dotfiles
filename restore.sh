@@ -14,7 +14,7 @@ mkdir -p ~/.claude
 tar xzf /tmp/claude-global.tgz -C ~/.claude
 rm /tmp/claude-global.tgz
 
-echo "=== Restoring dotfiles-private (claude/agents, tmuxinator templates) ==="
+echo "=== Restoring dotfiles-private (claude/agents) ==="
 op document get "dotfiles-private-migration" \
   --vault "$VAULT" --account "$ACCOUNT" \
   --output /tmp/dotfiles-private.tgz

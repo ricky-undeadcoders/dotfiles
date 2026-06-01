@@ -5,15 +5,6 @@
 export EDITOR="nvim"
 export VISUAL="nvim"
 
-# History — shared across all tmux sessions in real-time
-HISTFILE="$HOME/.zsh_history"
-HISTSIZE=50000
-SAVEHIST=50000
-setopt SHARE_HISTORY          # share between sessions live
-setopt INC_APPEND_HISTORY     # write immediately, not on exit
-setopt HIST_IGNORE_DUPS       # skip consecutive duplicates
-setopt HIST_IGNORE_SPACE      # skip commands starting with space
-
 # Personal bin
 export PATH="$HOME/bin:$PATH"
 
@@ -27,6 +18,9 @@ export NVM_DIR="$HOME/.nvm"
 # Create venv:     uv venv --python 3.12
 # Fast pip:        uv pip install -r requirements.txt
 eval "$(uv generate-shell-completion zsh 2>/dev/null)"
+
+# fzf — Ctrl+R (history), Ctrl+T (files), Alt+C (cd dir)
+command -v fzf >/dev/null 2>&1 && source <(fzf --zsh)
 
 # Google Cloud SDK
 if [ -f "$HOME/run/google-cloud-sdk/path.zsh.inc" ]; then

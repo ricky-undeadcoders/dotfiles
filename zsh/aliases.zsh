@@ -30,6 +30,6 @@ alias clh='cd ~/code/claude && claude'
 alias clr='claude --resume'
 alias clhr='clh --resume'
 
-# tmuxinator
-alias muxl='tmuxinator list'
-alias muxs='tmuxinator stop'
+# tmux
+alias muxl='tmux list-sessions'
+alias muxk='tmux kill-session -t'

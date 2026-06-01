@@ -134,19 +134,38 @@ pyuse () {
     echo "System python: $(~/bin/python3 --version)"
 }
 
+MUX_PROJECTS_FILE="${MUX_PROJECTS_FILE:-$HOME/.mux_projects}"
+
+# Record dir as MRU (newest top, deduped)
+_mux_record () {
+    local dir="$1"
+    [ -z "$dir" ] && return
+    local tmp
+    tmp="$(mktemp)" || return
+    {
+        printf '%s\n' "$dir"
+        [ -f "$MUX_PROJECTS_FILE" ] && grep -vxF "$dir" "$MUX_PROJECTS_FILE"
+    } > "$tmp" && mv "$tmp" "$MUX_PROJECTS_FILE"
+}
+
 # Workspace launcher
 # Usage:
 #   mux                  → create/attach session for current directory
 #   mux ~/code/my-repo   → create/attach session for that directory
-#   mux my-project       → attach to existing session by name
+#   mux my-session       → attach to existing tmux session by name
+#   muxr [target]        → same as mux, but claude window runs `claude --resume`
+#   muxp                 → fzf picker over saved projects, cd + mux
 mux () {
-    local TEMPLATE="$HOME/code/dotfiles/tmuxinator/example.yml"
+    local claude_cmd="${MUX_CLAUDE_CMD:-claude}"
     local target="${1:-.}"
 
-    # If arg matches an existing tmuxinator session by name, just start it
-    if [ "$target" != "." ] && [ -f "$HOME/.tmuxinator/${target}.yml" ] && [ ! -d "$target" ]; then
-        cd "$(grep '^root:' "$HOME/.tmuxinator/${target}.yml" | awk '{print $2}')" 2>/dev/null
-        tmuxinator start "$target"
+    # If arg matches an existing tmux session (and isn't a directory), attach
+    if [ "$target" != "." ] && [ ! -d "$target" ] && tmux has-session -t "=$target" 2>/dev/null; then
+        if [ -n "$TMUX" ]; then
+            tmux switch-client -t "=$target"
+        else
+            tmux attach-session -t "=$target"
+        fi
         return
     fi
 
@@ -162,28 +181,44 @@ mux () {
     name="${name//./-}"
     name="${name// /-}"
 
-    # If tmuxinator config already exists, just start it
-    local yml="$HOME/.tmuxinator/${name}.yml"
-    if [ -f "$yml" ]; then
-        cd "$dir"
-        tmuxinator start "$name"
-        return
+    # Attach if session already exists; otherwise create detached then attach/switch
+    if ! tmux has-session -t "=$name" 2>/dev/null; then
+        tmux new-session -d -s "$name" -c "$dir" -n shell
+        tmux new-window -t "$name:" -c "$dir" -n claude "$claude_cmd"
+        tmux select-window -t "$name:1"
     fi
 
-    # Generate config from template
-    if [ ! -f "$TEMPLATE" ]; then
-        echo "Error: template not found at $TEMPLATE" >&2
+    _mux_record "$dir"
+
+    if [ -n "$TMUX" ]; then
+        tmux switch-client -t "=$name"
+    else
+        tmux attach-session -t "=$name"
+    fi
+}
+
+muxr () {
+    MUX_CLAUDE_CMD="claude --resume" mux "$@"
+}
+
+muxp () {
+    if ! command -v fzf >/dev/null 2>&1; then
+        echo "fzf not installed. Run: brew install fzf" >&2
+        return 1
+    fi
+    if [ ! -s "$MUX_PROJECTS_FILE" ]; then
+        echo "No projects yet. Run 'mux' in a directory first." >&2
         return 1
     fi
 
-    mkdir -p "$HOME/.tmuxinator"
+    local dir
+    dir="$(grep -v '^$' "$MUX_PROJECTS_FILE" | fzf --prompt='mux> ' --height=40% --reverse)"
+    [ -z "$dir" ] && return 0
 
-    sed \
-        -e "s|<%= @settings\[\"name\"\] %>|${name}|g" \
-        -e "s|<%= @settings\[\"root\"\] %>|${dir}|g" \
-        "$TEMPLATE" > "$yml"
+    if [ ! -d "$dir" ]; then
+        echo "Dir gone: $dir" >&2
+        return 1
+    fi
 
-    echo "Created session: $name ($dir)"
-    cd "$dir"
-    tmuxinator start "$name"
+    cd "$dir" && mux
 }

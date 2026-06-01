@@ -17,7 +17,7 @@ FORMULAE=(
     git gh jq yq wget htop watch coreutils lazygit
 
     # Terminal
-    tmux tmuxinator neovim glow ripgrep fd
+    tmux neovim glow ripgrep fd fzf
 
     # Languages
     go node deno uv
