@@ -16,6 +16,9 @@ return {
       hide_dotfiles = false,
       hide_gitignored = false,
     },
+    window = {
+      width = 30,
+    },
     filesystem = {
       use_libuv_file_watcher = true,
     },
