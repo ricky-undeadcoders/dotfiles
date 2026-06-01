@@ -37,6 +37,10 @@ for skill in ~/.dotfiles-private/skills/*/*/; do
   ln -sfn "$skill" "$HOME/.claude/skills/$name"
 done
 
+echo "=== Installing caveman Claude Code plugin ==="
+claude plugin marketplace add JuliusBrussee/caveman
+claude plugin install caveman@caveman
+
 echo "=== Restoring notes ==="
 op document get "notes-migration" \
   --vault "$VAULT" --account "$ACCOUNT" \
