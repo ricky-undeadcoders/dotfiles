@@ -63,6 +63,7 @@ CASKS=(
     slack
     spotify
     tailscale
+    vlc
     zoom
 )
 
