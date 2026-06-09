@@ -84,6 +84,7 @@ else
 
 # --- Terminal Command Center ---
 # Completion system (must be before anything that registers completions)
+fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
 autoload -Uz compinit
 compinit
 
