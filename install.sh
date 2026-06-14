@@ -56,6 +56,8 @@ make_symlink() {
 make_symlink "$DOTFILES/tmux/tmux.conf"         "$HOME/.tmux.conf"
 make_symlink "$DOTFILES/nvim"                    "$HOME/.config/nvim"
 make_symlink "$DOTFILES/claude/scripts"          "$HOME/.claude/scripts"
+mkdir -p "$HOME/.claude/skills"
+make_symlink "$DOTFILES/claude/skills/brag-doc"  "$HOME/.claude/skills/brag-doc"
 make_symlink "$DOTFILES/ghostty/config"          "$HOME/.config/ghostty/config"
 make_symlink "$DOTFILES/ghostty/themes"          "$HOME/.config/ghostty/themes"
 
