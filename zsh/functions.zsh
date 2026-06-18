@@ -11,7 +11,21 @@ gitr () {
     echo "git pull origin $branch"
     git pull origin $branch
     echo "Cleaning up merged branches..."
+    # Delete local branches whose remote tracking branch was deleted (shown as ": gone]")
     git branch -vv | grep ": gone]" | awk '{print $1}' | xargs -I {} bash -c "git branch -D {}"
+    echo "Cleaning up local branches with no upstream..."
+    # Delete local-only branches that were never pushed (no upstream tracking branch).
+    # These don't appear as ": gone]" above because they never had a remote.
+    for local_branch in $(git for-each-ref --format='%(refname:short)' refs/heads); do
+        # Never delete the default branch we just checked out
+        if [ "$local_branch" = "$branch" ]; then
+            continue
+        fi
+        # If the branch has no @{upstream}, rev-parse fails -> it's local-only -> delete it
+        if ! git rev-parse --abbrev-ref "$local_branch@{upstream}" >/dev/null 2>&1; then
+            git branch -D "$local_branch"
+        fi
+    done
 }
 
 # Git: create a new branch with your prefix
