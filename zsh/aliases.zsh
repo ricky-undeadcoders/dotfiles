@@ -29,6 +29,7 @@ alias cl='claude'
 alias clh='cd ~/code/claude && claude'
 alias clr='claude --resume'
 alias clhr='clh --resume'
+alias bucc='brew upgrade claude-code'
 
 # tmux
 alias muxl='tmux list-sessions'
