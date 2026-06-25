@@ -25,6 +25,7 @@ k "Opt+9" "Claude (right)"
 k "Opt+0" "Terminal (right)"
 k "Opt+f" "Focus mode"
 k "Opt+=" "Reset layout"
+k "Ctrl+x" "Kill pane"
 k "Opt+q" "Quit session"
 echo ""
 
