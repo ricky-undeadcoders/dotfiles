@@ -101,6 +101,9 @@ compinit
 [ -f ~/.dotfiles-private/tokens.zsh ] && source ~/.dotfiles-private/tokens.zsh
 [ -f ~/.dotfiles-private/aliases.zsh ] && source ~/.dotfiles-private/aliases.zsh
 
+# Todolist
+[ -f ~/.todolist_setup.sh ] && source ~/.todolist_setup.sh
+
 # Cowsay greeting
 fortune | cowsay
 # --- End Terminal Command Center ---
