@@ -198,7 +198,11 @@ mux () {
     # Attach if session already exists; otherwise create detached then attach/switch
     if ! tmux has-session -t "=$name" 2>/dev/null; then
         tmux new-session -d -s "$name" -c "$dir" -n shell
-        tmux new-window -t "$name:" -c "$dir" -n claude "$claude_cmd"
+        # Upgrade claude-code, run claude, then exec a login shell so quitting
+        # claude leaves the window open instead of closing it. -i so ~/.zshrc
+        # is sourced and the `bucc` alias resolves.
+        local launch="bucc; $claude_cmd; exec ${SHELL:-zsh} -l"
+        tmux new-window -t "$name:" -c "$dir" -n claude "${SHELL:-zsh} -ic '$launch'"
         tmux select-window -t "$name:1"
     fi
 
